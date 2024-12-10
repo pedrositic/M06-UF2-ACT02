@@ -38,7 +38,7 @@ public class GestioDBHR {
                         try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
                             System.out.println("Conexió exitosa");
         
-                            String File_create_script = "db_scripts/DB_Schema_HR.sql" ;
+                            String File_create_script = "db_scripts/tenfe.sql" ;
         
                             InputStream input_sch = GestioDBHR.class.getClassLoader().getResourceAsStream(File_create_script);
         
@@ -105,7 +105,7 @@ public class GestioDBHR {
 
         switch(opcio) {
             case 1:
-                String File_data_script = "db_scripts/DB_Data_HR.sql" ;
+                String File_data_script = "db_scripts/inserts.sql" ;
     
                 InputStream input_data = GestioDBHR.class.getClassLoader().getResourceAsStream(File_data_script);
 
