@@ -1,4 +1,4 @@
-package com.accesadades.jdbc;
+package com.tenfe;
 
 import java.time.LocalDate;
 
