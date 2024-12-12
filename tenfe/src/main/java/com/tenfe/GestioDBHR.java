@@ -196,7 +196,7 @@ public class GestioDBHR {
             System.out.println("1. Estació per id");
             System.out.println("2. Estació per nom");
             System.out.println("3. Modificar nom estació");
-            System.out.println("2. Esborrar estació");
+            System.out.println("4. Esborrar estació");
 
             System.out.print("Introdueix l'opció tot seguit >> ");
 
@@ -204,16 +204,15 @@ public class GestioDBHR {
 
             switch (opcio) {
                 case 1:
-                    System.out.println("Introdueix la id de l'estació >> ");
+                    System.out.print("Introdueix la id de l'estació >> ");
                     int idEst = Integer.parseInt(br.readLine());
-                    // crudbhr.ReadEstacioId(connection, "estacio", idEst);
+                    crudbhr.ReadEstacioId(connection, "estacio", idEst);
                     break;
                 case 2:
-                    System.out.println("Introdueix el salari mínim dins el rang >> ");
-                    float salMin = Float.parseFloat(br.readLine());
-                    System.out.println("Introdueix el salari màxim dins el rang >> ");
-                    float salMax = Float.parseFloat(br.readLine());
-                    crudbhr.ReadSalaries(connection, "EMPLOYEES", salMin, salMax);
+                    System.out.print("Introdueix el nom de l'estacio a buscar >> ");
+                    String nom = br.readLine();
+                    crudbhr.ReadEstacioNom(connection, "estacio", nom);
+                    break;
             }
         }
     }

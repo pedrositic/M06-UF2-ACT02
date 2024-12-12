@@ -12,9 +12,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 /**
- *  TODO: 
+ * TODO:
  */
 
 public class CRUDHR {
@@ -62,14 +61,13 @@ public class CRUDHR {
             ResultSet rset = statement.executeQuery(query);
             // obtenim numero de columnes i nom
             int colNum = getColumnNames(rset);
-            // Si el nombre de columnes és >0 procedim a llegir i mostrar els registres
+            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
             if (colNum > 0) {
                 recorrerRegistres(rset, colNum);
             }
         }
     }
 
-    
     // Aquest mètode auxiliar podria ser utileria del READ, mostra el nom de les
     // columnes i quantes n'hi ha
     public static int getColumnNames(ResultSet rs) throws SQLException {
@@ -100,8 +98,33 @@ public class CRUDHR {
         }
     }
 
+    public void ReadEstacioId(Connection connection, String TableName, int id)
+            throws ConnectException, SQLException {
+        String query = "SELECT * FROM " + TableName + " WHERE id = ?";
+        try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+            prepstat.setInt(1, id);
+            ResultSet rset = prepstat.executeQuery();
+            int colNum = getColumnNames(rset);
+            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
+            if (colNum > 0) {
+                recorrerRegistres(rset, colNum);
+            }
+        }
+    }
 
-    
+    public void ReadEstacioNom(Connection connection, String TableName, String nom)
+            throws ConnectException, SQLException {
+        String query = "SELECT * FROM estacio WHERE nom LIKE '%?%'";
+        try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+            prepstat.setString(1, nom);
+            ResultSet rset = prepstat.executeQuery();
+            int colNum = getColumnNames(rset);
+            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
+            if (colNum > 0) {
+                recorrerRegistres(rset, colNum);
+            }
+        }
+    }
 
 
     public void ReadDepartamentsId(Connection connection, String TableName, int id)
@@ -117,7 +140,7 @@ public class CRUDHR {
             }
         }
     }
-    
+
     public void ReadSalaries(Connection connection, String TableName, float salMin, float salMax)
             throws ConnectException, SQLException {
         String query = "SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY FROM "
