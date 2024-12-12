@@ -19,8 +19,8 @@ public class Employees {
 
     // Constructor completo
     public Employees(int employeeId, String firstName, String lastName, String email, String phoneInt,
-                  LocalDate hireDate, String jobId, Float salary, Float commissionPct,
-                  Integer managerId, Integer departmentId, String bonus) {
+            LocalDate hireDate, String jobId, Float salary, Float commissionPct,
+            Integer managerId, Integer departmentId, String bonus) {
         this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
