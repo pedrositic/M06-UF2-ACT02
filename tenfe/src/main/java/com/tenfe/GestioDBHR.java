@@ -231,6 +231,13 @@ public class GestioDBHR {
                     String nom = br.readLine();
                     crudbhr.ReadEstacioNom(connection, "estacio", nom);
                     break;
+                case 3:
+                    System.out.print("Introdueix el id de l'estacio a modificar >>");
+                    idEst = Integer.parseInt(br.readLine());
+                    System.out.print("Introdueix el nou nom de l'estacio a modificar >> ");
+                    nom = br.readLine();
+                    crudbhr.UpdateEstacio(connection, idEst, nom);
+                    break;
                 case 4:
                     System.out.print("Introdueix el id de l'estacio a eliminar >> ");
                     idEst = Integer.parseInt(br.readLine());

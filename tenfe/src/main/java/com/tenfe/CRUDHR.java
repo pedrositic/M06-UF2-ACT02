@@ -19,10 +19,7 @@ import java.sql.Statement;
  * Una opció per mostrar tots els registres a la taula que trieu i que pugui
  * paginar, és a dir, mostri els registres de 10 en 10 o del número que trieu
  * (mireu https://www.mariadbtutorial.com/mariadb-basics/mariadb-limit/).
- * 
- * 
- * Una opció que permeti modificar almenys un dels camps de la taula que trieu.
- * 
+ *  
  */
 
 public class CRUDHR {
@@ -161,6 +158,9 @@ public class CRUDHR {
 
                 System.out.println("ID: " + id + " NOM: " + nom);
 
+            } catch(Exception e) {
+                System.out.println("Error inserint l'estació");
+                connection.rollback();
             }
             connection.setAutoCommit(true);
         }
@@ -177,6 +177,29 @@ public class CRUDHR {
                 prepstat.executeUpdate();
                 System.out.println("Estacio Eliminada!");
                 connection.commit();
+            } catch(Exception e) {
+                System.out.println("Error eliminant l'estació");
+                connection.rollback();
+            }
+            connection.setAutoCommit(true);
+        }
+    }
+
+    public void UpdateEstacio(Connection connection, int id, String newNom) throws ConnectException, SQLException {
+        connection.setAutoCommit(false);
+
+        // Comprovem que la estacio existeix
+        if (checkIfRecordsExist(connection, "estacio", "id", id)) {
+            String query = "UPDATE estacio SET nom = ? WHERE id = ?";
+            try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+                prepstat.setString(1, newNom);
+                prepstat.setInt(2, id);
+                prepstat.executeUpdate();
+                System.out.println("Estacio modificada!");
+                connection.commit();
+            } catch(Exception e) {
+                System.out.println("Error modificant l'estació");
+                connection.rollback();
             }
             connection.setAutoCommit(true);
         }
