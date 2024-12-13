@@ -13,7 +13,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * TODO:
+ * Una opció per inserir registres a la taula que trieu.
+ * Una opció per mostrar tots els registres a la taula que trieu i que pugui
+ * paginar, és a dir, mostri els registres de 10 en 10 o del número que trieu
+ * (mireu https://www.mariadbtutorial.com/mariadb-basics/mariadb-limit/).
+ * Una opció que permeti crear un XML amb tots els registres que es llegeixen de
+ * la taula.
+ * Una opció que permeti modificar almenys un dels camps de la taula que trieu.
+ * Una opció que permeti esborrar un registre passant la id de la taula que
+ * trieu.
  */
 
 public class CRUDHR {
@@ -91,10 +99,18 @@ public class CRUDHR {
                 if (i + 1 == ColNum) {
                     System.out.println(rs.getString(i + 1));
                 } else {
-
                     System.out.print(rs.getString(i + 1) + ", ");
                 }
             }
+        }
+    }
+
+    private void executeQuery(PreparedStatement prepstat) throws SQLException {
+        ResultSet rset = prepstat.executeQuery();
+        int colNum = getColumnNames(rset);
+        // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
+        if (colNum > 0) {
+            recorrerRegistres(rset, colNum);
         }
     }
 
@@ -103,57 +119,51 @@ public class CRUDHR {
         String query = "SELECT * FROM " + TableName + " WHERE id = ?";
         try (PreparedStatement prepstat = connection.prepareStatement(query)) {
             prepstat.setInt(1, id);
-            ResultSet rset = prepstat.executeQuery();
-            int colNum = getColumnNames(rset);
-            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
-            if (colNum > 0) {
-                recorrerRegistres(rset, colNum);
-            }
+            executeQuery(prepstat);
         }
     }
 
     public void ReadEstacioNom(Connection connection, String TableName, String nom)
             throws ConnectException, SQLException {
-        String query = "SELECT * FROM estacio WHERE nom LIKE '%?%'";
+        String query = "SELECT * FROM estacio WHERE nom LIKE ?";
         try (PreparedStatement prepstat = connection.prepareStatement(query)) {
-            prepstat.setString(1, nom);
-            ResultSet rset = prepstat.executeQuery();
-            int colNum = getColumnNames(rset);
-            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
-            if (colNum > 0) {
-                recorrerRegistres(rset, colNum);
-            }
+            prepstat.setString(1, "%" + nom + "%");
+            executeQuery(prepstat);
         }
     }
 
-
-    public void ReadDepartamentsId(Connection connection, String TableName, int id)
-            throws ConnectException, SQLException {
-        String query = "SELECT * FROM " + TableName + " WHERE department_id = ?";
-        try (PreparedStatement prepstat = connection.prepareStatement(query)) {
-            prepstat.setInt(1, id);
-            ResultSet rset = prepstat.executeQuery();
-            int colNum = getColumnNames(rset);
-            // Si el nombre de columnes és >0 procedim a llegir i mostrar els registres
-            if (colNum > 0) {
-                recorrerRegistres(rset, colNum);
-            }
+    public void InsertEstacio(Connection connection, String nom) throws ConnectException, SQLException, IOException {
+        // Primer mirem si hi ha alguna estacio amb el nom que asignarem
+        if (checkIfRecordsExist(connection, "estacio", "nom", nom)) {
+            System.out.println("Ja existeix una estació amb aquest nom");
+        }
+        else {
+            System.out.println("Listo!");
         }
     }
 
-    public void ReadSalaries(Connection connection, String TableName, float salMin, float salMax)
-            throws ConnectException, SQLException {
-        String query = "SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, SALARY FROM "
-                + TableName + " WHERE salary BETWEEN ? AND ?";
+    private boolean hasRecords(PreparedStatement prepstat) throws SQLException {
+        try (ResultSet rset = prepstat.executeQuery()) {
+            return rset.next();
+        }
+    }
+
+    public boolean checkIfRecordsExist(Connection connection, String tableName, String columnName, Object value)
+            throws SQLException {
+        // Construir una consulta generica per verificar si hi ha registres
+        String query = "SELECT 1 FROM " + tableName + " WHERE " + columnName + " = ? LIMIT 1";
+
         try (PreparedStatement prepstat = connection.prepareStatement(query)) {
-            prepstat.setFloat(1, salMin);
-            prepstat.setFloat(2, salMax);
-            ResultSet rset = prepstat.executeQuery();
-            int colNum = getColumnNames(rset);
-            // Si el nombre de columnes és >0 procedim a llegir i mostrar els registres
-            if (colNum > 0) {
-                recorrerRegistres(rset, colNum);
+
+            if (value instanceof Integer) {
+                prepstat.setInt(1, (Integer) value);
+            } else if (value instanceof String) {
+                prepstat.setString(1, (String) value);
+            } else {
+                throw new IllegalArgumentException("Unsupported parameter type");
             }
+
+            return hasRecords(prepstat);
         }
     }
 }

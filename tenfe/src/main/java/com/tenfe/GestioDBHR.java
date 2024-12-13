@@ -197,6 +197,7 @@ public class GestioDBHR {
             System.out.println("2. Estació per nom");
             System.out.println("3. Modificar nom estació");
             System.out.println("4. Esborrar estació");
+            System.out.println("5. Inserir estació");
 
             System.out.print("Introdueix l'opció tot seguit >> ");
 
@@ -213,6 +214,12 @@ public class GestioDBHR {
                     String nom = br.readLine();
                     crudbhr.ReadEstacioNom(connection, "estacio", nom);
                     break;
+                case 5:
+                    System.out.print("Introdueix el nom de la nova estacio >> ");
+                    nom = br.readLine();
+                    crudbhr.InsertEstacio(connection, nom);
+                    
+
             }
         }
     }
