@@ -1,6 +1,9 @@
 package com.tenfe;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,15 +16,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * Una opció per inserir registres a la taula que trieu.
  * Una opció per mostrar tots els registres a la taula que trieu i que pugui
  * paginar, és a dir, mostri els registres de 10 en 10 o del número que trieu
  * (mireu https://www.mariadbtutorial.com/mariadb-basics/mariadb-limit/).
- * Una opció que permeti crear un XML amb tots els registres que es llegeixen de
- * la taula.
+ * 
+ * 
  * Una opció que permeti modificar almenys un dels camps de la taula que trieu.
- * Una opció que permeti esborrar un registre passant la id de la taula que
- * trieu.
+ * 
  */
 
 public class CRUDHR {
@@ -93,6 +94,16 @@ public class CRUDHR {
         return numberOfColumns;
     }
 
+    public static int getColumns(ResultSet rs) throws SQLException {
+        int numberOfColumns = 0;
+        if (rs != null) {
+            ResultSetMetaData rsMetaData = rs.getMetaData();
+            numberOfColumns = rsMetaData.getColumnCount();
+        }
+        System.out.println();
+        return numberOfColumns;
+    }
+
     public void recorrerRegistres(ResultSet rs, int ColNum) throws SQLException {
         while (rs.next()) {
             for (int i = 0; i < ColNum; i++) {
@@ -133,12 +144,41 @@ public class CRUDHR {
     }
 
     public void InsertEstacio(Connection connection, String nom) throws ConnectException, SQLException, IOException {
+        connection.setAutoCommit(false);
+
         // Primer mirem si hi ha alguna estacio amb el nom que asignarem
         if (checkIfRecordsExist(connection, "estacio", "nom", nom)) {
             System.out.println("Ja existeix una estació amb aquest nom");
+        } else {
+            String query = "INSERT INTO estacio (id, nom) VALUES(?,?)";
+            try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+                int id = getMaxId(connection, "estacio") + 1;
+                prepstat.setInt(1, id);
+                prepstat.setString(2, nom);
+                prepstat.executeUpdate();
+                System.out.println("Estacio inserida!");
+                connection.commit();
+
+                System.out.println("ID: " + id + " NOM: " + nom);
+
+            }
+            connection.setAutoCommit(true);
         }
-        else {
-            System.out.println("Listo!");
+    }
+
+    public void DeleteEstacio(Connection connection, int id) throws ConnectException, SQLException {
+        connection.setAutoCommit(false);
+
+        // Comprovem que la estacio existeix
+        if (checkIfRecordsExist(connection, "estacio", "id", id)) {
+            String query = "DELETE FROM estacio WHERE id = ?";
+            try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+                prepstat.setInt(1, id);
+                prepstat.executeUpdate();
+                System.out.println("Estacio Eliminada!");
+                connection.commit();
+            }
+            connection.setAutoCommit(true);
         }
     }
 
@@ -166,4 +206,24 @@ public class CRUDHR {
             return hasRecords(prepstat);
         }
     }
+
+    private int getMaxId(Connection connection, String tableName) throws SQLException {
+        int id = 0;
+        String query = "SELECT MAX(id) FROM " + tableName;
+
+        try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+            ResultSet rset = prepstat.executeQuery();
+            int colNum = getColumns(rset);
+            // Si el nombre de columnes és > 0 procedim a llegir i mostrar els registres
+            if (colNum > 0) {
+                while (rset.next()) {
+                    for (int i = 0; i < colNum; i++) {
+                        id = rset.getInt(i + 1);
+                    }
+                }
+            }
+        }
+        return id;
+    }
+
 }

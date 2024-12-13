@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<estacions>
+    <estacio>
+        <id>1</id>
+        <nom>Barcelona Sants</nom>
+    </estacio>
+    <estacio>
+        <id>2</id>
+        <nom>Madrid Atocha</nom>
+    </estacio>
+    <estacio>
+        <id>3</id>
+        <nom>Valencia Nord</nom>
+    </estacio>
+    <estacio>
+        <id>4</id>
+        <nom>Sevilla Santa Justa</nom>
+    </estacio>
+    <estacio>
+        <id>5</id>
+        <nom>Paris Gare de Lyon</nom>
+    </estacio>
+    <estacio>
+        <id>6</id>
+        <nom>Roma Termini</nom>
+    </estacio>
+    <estacio>
+        <id>7</id>
+        <nom>Premia</nom>
+    </estacio>
+    <estacio>
+        <id>8</id>
+        <nom>Balona</nom>
+    </estacio>
+    <estacio>
+        <id>9</id>
+        <nom>Badalona</nom>
+    </estacio>
+</estacions>

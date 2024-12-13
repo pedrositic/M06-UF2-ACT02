@@ -1,17 +1,32 @@
 package com.tenfe;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class GestioDBHR {
     // Com veurem, aquesta booleana controla si volem sortir de l'aplicació.
@@ -198,6 +213,8 @@ public class GestioDBHR {
             System.out.println("3. Modificar nom estació");
             System.out.println("4. Esborrar estació");
             System.out.println("5. Inserir estació");
+            System.out.println("6. Generar XML");
+            System.out.println("9. Sortir");
 
             System.out.print("Introdueix l'opció tot seguit >> ");
 
@@ -214,13 +231,72 @@ public class GestioDBHR {
                     String nom = br.readLine();
                     crudbhr.ReadEstacioNom(connection, "estacio", nom);
                     break;
+                case 4:
+                    System.out.print("Introdueix el id de l'estacio a eliminar >> ");
+                    idEst = Integer.parseInt(br.readLine());
+                    crudbhr.DeleteEstacio(connection, idEst);
+                    break;
                 case 5:
                     System.out.print("Introdueix el nom de la nova estacio >> ");
                     nom = br.readLine();
                     crudbhr.InsertEstacio(connection, nom);
-                    
-
+                    break;
+                case 6:
+                    try {
+                        generateEstacioXML(connection, "tenfe/src/main/resources/xml/estacions.xml");
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 9:
+                    return;
             }
+        }
+    }
+
+    public static void generateEstacioXML(Connection connection, String outputFilePath)
+            throws SQLException, ParserConfigurationException, TransformerException {
+
+        // Consulta per obtenir els registres de la taula estació
+        String query = "SELECT * FROM estacio";
+
+        try (PreparedStatement prepstat = connection.prepareStatement(query);
+                ResultSet rset = prepstat.executeQuery()) {
+
+            // Crear el document XML
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.newDocument();
+
+            // Crear l'element arrel
+            Element rootElement = doc.createElement("estacions");
+            doc.appendChild(rootElement);
+
+            // Afegir registres de la taula com a elements al document XML
+            while (rset.next()) {
+                Element estacioElement = doc.createElement("estacio");
+
+                Element idElement = doc.createElement("id");
+                idElement.appendChild(doc.createTextNode(String.valueOf(rset.getInt("id"))));
+                estacioElement.appendChild(idElement);
+
+                Element nomElement = doc.createElement("nom");
+                nomElement.appendChild(doc.createTextNode(rset.getString("nom")));
+                estacioElement.appendChild(nomElement);
+
+                rootElement.appendChild(estacioElement);
+            }
+
+            // Escriure el document XML al fitxer de sortida
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File(outputFilePath));
+
+            transformer.transform(source, result);
+
+            System.out.println("XML generat correctament a: " + outputFilePath);
         }
     }
 }

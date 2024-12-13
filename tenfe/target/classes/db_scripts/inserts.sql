@@ -6,9 +6,9 @@ INSERT INTO `companyia` (`id`, `nom`) VALUES
 
 -- Inserciones para la tabla conductor
 INSERT INTO `conductor` (`id`, `nom`, `companyia`) VALUES
-(1, 'Juan Pérez', 1),
-(2, 'Laura López', 2),
-(3, 'Carlos García', 3);
+(1, 'Juan Perez', 1),
+(2, 'Laura Lopez', 2),
+(3, 'Carlos Garcia', 3);
 
 -- Inserciones para la tabla estacio
 INSERT INTO `estacio` (`id`, `nom`) VALUES
@@ -19,9 +19,9 @@ INSERT INTO `estacio` (`id`, `nom`) VALUES
 
 -- Inserciones para la tabla maquinista
 INSERT INTO `maquinista` (`id`, `nom`, `companyia`) VALUES
-(1, 'Pedro Fernández', 1),
-(2, 'Ana Martínez', 2),
-(3, 'Luis Gómez', 3);
+(1, 'Pedro Fernandez', 1),
+(2, 'Ana Martinez', 2),
+(3, 'Luis Gomez', 3);
 
 -- Inserciones para la tabla tren
 INSERT INTO `tren` (`id`, `nom`, `companyia`, `capacitat`) VALUES
