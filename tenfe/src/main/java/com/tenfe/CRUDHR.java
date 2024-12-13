@@ -19,7 +19,7 @@ import java.sql.Statement;
  * Una opció per mostrar tots els registres a la taula que trieu i que pugui
  * paginar, és a dir, mostri els registres de 10 en 10 o del número que trieu
  * (mireu https://www.mariadbtutorial.com/mariadb-basics/mariadb-limit/).
- *  
+ * 
  */
 
 public class CRUDHR {
@@ -158,7 +158,7 @@ public class CRUDHR {
 
                 System.out.println("ID: " + id + " NOM: " + nom);
 
-            } catch(Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error inserint l'estació");
                 connection.rollback();
             }
@@ -177,7 +177,7 @@ public class CRUDHR {
                 prepstat.executeUpdate();
                 System.out.println("Estacio Eliminada!");
                 connection.commit();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error eliminant l'estació");
                 connection.rollback();
             }
@@ -197,7 +197,7 @@ public class CRUDHR {
                 prepstat.executeUpdate();
                 System.out.println("Estacio modificada!");
                 connection.commit();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 System.out.println("Error modificant l'estació");
                 connection.rollback();
             }
@@ -247,6 +247,30 @@ public class CRUDHR {
             }
         }
         return id;
+    }
+
+    public void ReadEstacio(Connection connection, int pageSize, int pageNumber)
+            throws SQLException {
+        // Calcular l'offset en base a la pàgina actual i la mida de la pàgina
+        int offset = (pageNumber - 1) * pageSize;
+
+        // Consulta amb LIMIT i OFFSET
+        String query = "SELECT * FROM estacio LIMIT ? OFFSET ?";
+
+        try (PreparedStatement prepstat = connection.prepareStatement(query)) {
+            // Establir paràmetres per al límit i l'offset
+            prepstat.setInt(1, pageSize);
+            prepstat.setInt(2, offset);
+
+            try (ResultSet rset = prepstat.executeQuery()) {
+                int colNum = getColumnNames(rset); // Obtenir el nombre de columnes i noms
+                if (colNum > 0) {
+                    recorrerRegistres(rset, colNum); // Llegeix i mostra els registres
+                } else {
+                    System.out.println("No hi ha registres en aquesta pàgina.");
+                }
+            }
+        }
     }
 
 }

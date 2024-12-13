@@ -170,7 +170,8 @@ public class GestioDBHR {
 
             System.out.println("De quina taula vols mostrar els seus registres?");
             System.out.println("1. Estació");
-            System.out.println("2. Sortir");
+            System.out.println("2. Estació Paginat");
+            System.out.println("3. Sortir");
 
             System.out.print("Introdueix l'opció tot seguit >> ");
 
@@ -181,6 +182,13 @@ public class GestioDBHR {
                     crudbhr.ReadAllDatabase(connection, "estacio");
                     break;
                 case 2:
+                    // Mostra la primera pàgina de registres amb 10 elements per pàgina
+                    System.out.println("Pàgina 1");
+                    crudbhr.ReadEstacio(connection, 10, 1);
+                    System.out.println("Pàgina 2");
+                    // Mostra la segona pàgina de registres amb 10 elements per pàgina
+                    crudbhr.ReadEstacio(connection, 10, 2);
+                case 3:
                     DispOptions = false;
                     break;
                 default:
@@ -251,7 +259,7 @@ public class GestioDBHR {
                 case 6:
                     try {
                         generateEstacioXML(connection, "tenfe/src/main/resources/xml/estacions.xml");
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
