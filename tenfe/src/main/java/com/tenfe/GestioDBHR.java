@@ -183,15 +183,17 @@ public class GestioDBHR {
                     break;
                 case 2:
 
+                    int tamany = 10;
+
                     // Calculem el total de registres de la taula
                     float size = crudbhr.getSizeTable(connection, "estacio");
 
                     // Calculem el total de pagines que pot tenir
-                    double pages = Math.ceil(size / 10.0);
+                    double pages = Math.ceil(size / tamany);
 
                     for (int i = 1; i <= pages; i++) {
                         System.out.printf("Pàgina %d%n", i);
-                        crudbhr.ReadEstacio(connection, 10, i);
+                        crudbhr.ReadEstacio(connection, tamany, i);
 
                         if (i != pages) {
                             System.out.println("Prem ENTER per la següent pàgina");
