@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -84,7 +85,7 @@ public class CRUDHR {
 
             for (int i = 1; i < numberOfColumns + 1; i++) {
                 String columnName = rsMetaData.getColumnName(i);
-                System.out.print(columnName + ", ");
+                System.out.printf("%-20s", columnName);
             }
         }
         System.out.println();
@@ -97,17 +98,18 @@ public class CRUDHR {
             ResultSetMetaData rsMetaData = rs.getMetaData();
             numberOfColumns = rsMetaData.getColumnCount();
         }
-        System.out.println();
         return numberOfColumns;
     }
 
     public void recorrerRegistres(ResultSet rs, int ColNum) throws SQLException {
         while (rs.next()) {
-            for (int i = 0; i < ColNum; i++) {
-                if (i + 1 == ColNum) {
-                    System.out.println(rs.getString(i + 1));
+            for (int i = 1; i <= ColNum; i++) {
+                String value = rs.getString(i) != null ? rs.getString(i) : "null";
+
+                if (i == ColNum) {
+                    System.out.printf("%-20s%n", value);
                 } else {
-                    System.out.print(rs.getString(i + 1) + ", ");
+                    System.out.printf("%-20s", value);
                 }
             }
         }
@@ -272,5 +274,21 @@ public class CRUDHR {
             }
         }
     }
+
+    public int getSizeTable(Connection connection, String tableName) throws SQLException {
+        // Consulta SQL per comptar els registres
+        String query = "SELECT COUNT(*) AS total FROM " + tableName;
+    
+        try (PreparedStatement prepstat = connection.prepareStatement(query);
+             ResultSet rset = prepstat.executeQuery()) {
+    
+            if (rset.next()) {
+                return rset.getInt("total"); // Retorna el valor de la columna "total"
+            } else {
+                return 0; // Retorna 0 si no es poden obtenir registres
+            }
+        }
+    }
+    
 
 }

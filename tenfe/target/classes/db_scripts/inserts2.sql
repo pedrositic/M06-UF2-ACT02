@@ -27,3 +27,5 @@ INSERT INTO `tren` (`id`, `nom`, `companyia`, `capacitat`) VALUES
 INSERT INTO `trajecte` (`id`, `nom`, `estacioInicialId`, `estacioFinalId`, `preu`, `parades`, `companyiaId`, `horaSortida`, `horaArribada`, `idTren`, `idMaquinista`) VALUES
 (4, 'Paris a Roma', 5, 6, 120.0, 4, 4, 600, 1400, 4, 4),
 (5, 'Roma a Barcelona', 6, 1, 100.0, 5, 5, 1600, 2300, 5, 5);
+
+

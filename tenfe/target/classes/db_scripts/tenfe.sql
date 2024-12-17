@@ -60,6 +60,16 @@ CREATE TABLE IF NOT EXISTS `maquinista` (
 ) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- La exportación de datos fue deseleccionada.
+-- Volcando estructura para tabla tenfe.tren
+CREATE TABLE IF NOT EXISTS `tren` (
+  `id` int(11) NOT NULL,
+  `nom` varchar(50) DEFAULT NULL,
+  `companyia` int(11) DEFAULT NULL,
+  `capacitat` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_tren_companyia` (`companyia`),
+  CONSTRAINT `FK_tren_companyia` FOREIGN KEY (`companyia`) REFERENCES `companyia` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- Volcando estructura para tabla tenfe.trajecte
 CREATE TABLE IF NOT EXISTS `trajecte` (
@@ -89,16 +99,6 @@ CREATE TABLE IF NOT EXISTS `trajecte` (
 
 -- La exportación de datos fue deseleccionada.
 
--- Volcando estructura para tabla tenfe.tren
-CREATE TABLE IF NOT EXISTS `tren` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(50) DEFAULT NULL,
-  `companyia` int(11) DEFAULT NULL,
-  `capacitat` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_tren_companyia` (`companyia`),
-  CONSTRAINT `FK_tren_companyia` FOREIGN KEY (`companyia`) REFERENCES `companyia` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=armscii8 COLLATE=armscii8_bin;
 
 -- La exportación de datos fue deseleccionada.
 

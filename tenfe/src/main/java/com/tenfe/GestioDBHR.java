@@ -182,12 +182,27 @@ public class GestioDBHR {
                     crudbhr.ReadAllDatabase(connection, "estacio");
                     break;
                 case 2:
-                    // Mostra la primera pàgina de registres amb 10 elements per pàgina
-                    System.out.println("Pàgina 1");
-                    crudbhr.ReadEstacio(connection, 10, 1);
-                    System.out.println("Pàgina 2");
-                    // Mostra la segona pàgina de registres amb 10 elements per pàgina
-                    crudbhr.ReadEstacio(connection, 10, 2);
+
+                    // Calculem el total de registres de la taula
+                    float size = crudbhr.getSizeTable(connection, "estacio");
+
+                    // Calculem el total de pagines que pot tenir
+                    double pages = Math.ceil(size / 10.0);
+
+                    for (int i = 1; i <= pages; i++) {
+                        System.out.printf("Pàgina %d%n", i);
+                        crudbhr.ReadEstacio(connection, 10, i);
+
+                        if (i != pages) {
+                            System.out.println("Prem ENTER per la següent pàgina");
+                            String entrada = br.readLine();
+                            if (!entrada.isBlank())
+                                break;
+                        }
+                    }
+
+                    System.out.println("Has arribat al final\n");
+
                 case 3:
                     DispOptions = false;
                     break;
